@@ -1,121 +1,142 @@
-# MovieRecommender# Movie Recommender System
+# Movie Recommender System
 
-**Notebook:** `MovieRecommenderSystem.ipynb` (placed at `/mnt/data/MovieRecommenderSystem.ipynb`)
+A content-based movie recommendation system built using the TMDB 5000 movies dataset. This system recommends movies based on content similarity including genres, keywords, cast, and crew information.
 
----
+## 📁 Repository Structure
 
-## Overview
+```
+MovieRecommender/
+├── README.md
+├── MovieRecommenderSystem.ipynb    # Main implementation notebook
+├── tmdb_5000_movies.csv           # Movies dataset (download required)
+└── tmdb_5000_credits.csv          # Credits dataset (download required)
+```
 
-This Jupyter Notebook implements a **movie recommender system** and documents the full workflow: data loading and preprocessing, exploratory data analysis (EDA), model(s) training (collaborative filtering / matrix factorization / baseline or content-based — whichever is implemented in the notebook), evaluation, and producing recommendations. The notebook is organized for readability and reproducibility so you (or a reviewer) can run it end-to-end.
+## 🎯 Overview
 
----
+This Jupyter Notebook implements a **content-based movie recommender system** that analyzes movie features like genres, keywords, cast, and crew to suggest similar movies. The system uses cosine similarity to find movies with similar content characteristics.
 
-## Contents / Notebook Structure
+## 📊 Dataset
 
-1. **Introduction & goals** — high level description of what the notebook aims to do.
-2. **Dependencies & environment setup** — packages required to run the notebook.
-3. **Data loading** — instructions + code to load dataset(s) used (e.g., MovieLens or custom CSVs).
-4. **Exploratory Data Analysis (EDA)** — summary statistics and plots to understand users, movies, and ratings.
-5. **Preprocessing** — cleaning steps, encoding, train/test split, and matrix construction.
-6. **Modeling** — implementation of one or more recommender algorithms (e.g., user-based CF, item-based CF, matrix factorization, SVD, or a baseline popularity model). May include hyperparameter tuning.
-7. **Evaluation** — metrics such as RMSE, MAE, Precision@K, Recall@K, or NDCG, depending on task framing.
-8. **Generating recommendations** — how to create top-N recommendations for a user or for all users.
-9. **Results & discussion** — interpretation of results, strengths and limitations, and potential next steps.
-10. **Appendix / Utilities** — helper functions, saving/loading models, example usage.
+The project uses the TMDB 5000 Movie Dataset which includes:
+- **tmdb_5000_movies.csv**: Movie information including genres, keywords, overview, etc.
+- **tmdb_5000_credits.csv**: Cast and crew information
 
----
+### Download Dataset
+You can download the dataset from:
+- [Kaggle - TMDB 5000 Movie Dataset](https://www.kaggle.com/datasets/tmdb/tmdb-movie-metadata)
 
-## Requirements
+Place both CSV files in the root directory of the project.
 
-This notebook was developed and tested with a Python 3.8+ environment. Install dependencies with pip (example):
+## 🔧 Requirements
 
+This notebook requires Python 3.8+ and the following packages:
+
+```bash
+pip install numpy pandas seaborn matplotlib scikit-learn
+```
+
+Or install all dependencies at once:
 ```bash
 pip install -r requirements.txt
-# If you don't have a requirements file, install the common packages:
-pip install numpy pandas scikit-learn scipy matplotlib seaborn jupyterlightgbm surprise
 ```
 
-> Note: Replace `surprise`, `lightgbm` with the actual libraries used in the notebook. If the notebook uses PyTorch or TensorFlow, install those as well.
+### Core Dependencies
+- `numpy` - Numerical computations
+- `pandas` - Data manipulation and analysis
+- `seaborn` - Statistical data visualization
+- `matplotlib` - Plotting and visualization
+- `scikit-learn` - Machine learning utilities (likely for cosine similarity)
+
+## 🚀 How to Run
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/bruteforce1127/MovieRecommender.git
+   cd MovieRecommender
+   ```
+
+2. **Download and place the dataset files:**
+   - Download `tmdb_5000_movies.csv` and `tmdb_5000_credits.csv`
+   - Place them in the project root directory
+
+3. **Install dependencies:**
+   ```bash
+   pip install numpy pandas seaborn matplotlib scikit-learn
+   ```
+
+4. **Launch Jupyter Notebook:**
+   ```bash
+   jupyter notebook MovieRecommenderSystem.ipynb
+   ```
+   or
+   ```bash
+   jupyter lab MovieRecommenderSystem.ipynb
+   ```
+
+5. **Run all cells sequentially** or restart kernel and run all cells.
+
+## 📋 Notebook Structure
+
+The notebook follows this workflow:
+
+1. **Library Imports** - Import essential libraries (numpy, pandas, seaborn, matplotlib)
+2. **Data Loading** - Load TMDB movies and credits datasets
+3. **Data Merging** - Combine datasets on movie title
+4. **Feature Selection** - Extract relevant columns (movie_id, title, overview, genres, keywords, cast, crew)
+5. **Data Cleaning** - Handle missing values and null entries
+6. **Preprocessing** - Process genres and other categorical features
+7. **Feature Engineering** - Create content-based features for similarity calculation
+8. **Model Building** - Implement content-based recommendation algorithm
+9. **Recommendation Generation** - Generate movie recommendations based on content similarity
+
+## 🎬 Expected Outputs
+
+- **Data Analysis**: Overview of dataset structure and missing values
+- **Preprocessed Features**: Cleaned and processed movie features
+- **Recommendation Function**: A working movie recommendation system
+- **Sample Recommendations**: Example recommendations for selected movies
+
+## 🔄 Algorithm Approach
+
+This is a **content-based filtering** approach that:
+- Uses movie metadata (genres, keywords, cast, crew, overview)
+- Calculates similarity between movies based on content features
+- Recommends movies with highest content similarity scores
+
+## 🛠️ Customization
+
+You can extend this project by:
+- Adding more content features (production companies, release year)
+- Implementing hybrid recommendation (content + collaborative filtering)
+- Adding user rating predictions
+- Building a web interface using Streamlit or Flask
+- Implementing deep learning-based embeddings
+
+## 📈 Performance Considerations
+
+- The system works well for movies with rich metadata
+- Performance depends on the quality of preprocessing and feature engineering
+- Content-based systems avoid the cold start problem for new movies
+
+## 🐛 Troubleshooting
+
+- **Missing dataset files**: Ensure both CSV files are in the project root
+- **Import errors**: Install missing packages using pip
+- **Memory issues**: The dataset is relatively small (~5000 movies) but ensure sufficient RAM
+- **File path errors**: Verify CSV files are named exactly as expected
+
+## 📜 License
+
+This project is open source. Please cite the TMDB dataset if using in academic work.
+
+## 🤝 Contributing
+
+Feel free to fork this repository and submit pull requests for improvements!
+
+## 📞 Contact
+
+**Developer**: bruteforce1127  
+**GitHub**: [bruteforce1127](https://github.com/bruteforce1127)
 
 ---
-
-## Data
-
-The notebook expects a movie ratings dataset. If the repo does not include the dataset, you can download a common public dataset (MovieLens) using the URLs below, or replace with your custom data in CSV format.
-
-- **MovieLens 100K**: https://grouplens.org/datasets/movielens/100k/
-- **MovieLens 1M**: https://grouplens.org/datasets/movielens/1m/
-
-**Data format (typical):**
-- `ratings.csv` or `u.data`: userId, movieId, rating, timestamp
-- `movies.csv`: movieId, title, genres
-
-If your notebook references specific filenames, make sure to place them in the same folder or change the path in the data loading cell.
-
----
-
-## How to run
-
-1. Open the notebook in JupyterLab / Jupyter Notebook / VS Code Jupyter extension:
-
-```bash
-jupyter lab
-# or
-jupyter notebook
-```
-
-2. Make sure the Python kernel has the environment with the packages installed.
-3. Run cells sequentially (or restart kernel and run all). If any path/data errors appear, update the file path variables at the top of the notebook.
-
-**Tip:** If you want to run the notebook programmatically and export the results, use `nbconvert`:
-
-```bash
-jupyter nbconvert --to notebook --execute MovieRecommenderSystem.ipynb --output executed.ipynb
-```
-
----
-
-## Expected outputs
-
-- EDA plots showing rating distributions, popular movies, and active users.
-- Trained model objects (in-memory or saved to disk) and evaluation scores (e.g., RMSE, Precision@K).
-- A sample of top-N recommendations for example users printed in the notebook.
-
----
-
-## Reproducibility
-
-To reproduce results exactly, set random seeds where appropriate (e.g., `numpy.random.seed`, `random.seed`, and ML framework seeds). If the notebook uses train/test splits, note the seed and the split ratio in the preprocessing section.
-
----
-
-## Customization & Next steps
-
-You can extend the notebook by:
-- Trying alternate models (matrix factorization, implicit-feedback approaches like Alternating Least Squares, neural recommenders).
-- Adding content-based features (movie genres, tags, embeddings from plots or posters).
-- Building an evaluation pipeline with cross-validation and time-aware splits for realistic recommendations.
-- Deploying the model as a simple web service (Flask/FastAPI) or integrating with a Streamlit demo.
-
----
-
-## Troubleshooting
-
-- **Missing packages:** install the required package using `pip` or `conda`.
-- **Data file not found:** verify the file path at the top of the notebook and ensure the dataset is downloaded.
-- **Kernel crashes / memory limits:** reduce dataset size (use a subset such as MovieLens 100K) or run on a machine with more RAM.
-
----
-
-## Attribution
-
-If you use this notebook in a report or public repository, please cite the original author(s) of the notebook and any datasets used (e.g., GroupLens for MovieLens).
-
----
-
-If you want, I can:
-- generate a `requirements.txt` automatically from imports in the notebook,
-- create a minimal `environment.yml` for conda,
-- or produce a short `Dockerfile` to run the notebook reproducibly.
-
-Tell me which one you'd like next.
